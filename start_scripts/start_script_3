@@ -1,0 +1,15 @@
+# Загружаем VFS
+vfs-load /path/to/my_vfs.json
+
+# Переход в /home/user
+cd /home/user
+ls
+
+# Создаём файл
+touch notes.txt
+
+# Проверяем, что появился
+ls
+
+# Печатаем что-то
+echo File created!

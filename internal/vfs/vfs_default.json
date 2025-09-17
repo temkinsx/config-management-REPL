@@ -1,0 +1,45 @@
+{
+  "name": "/",
+  "type": "dir",
+  "children": [
+    {
+      "name": "home",
+      "type": "dir",
+      "children": [
+        {
+          "name": "user",
+          "type": "dir",
+          "children": [
+            {
+              "name": "readme.txt",
+              "type": "file",
+              "contentText": "Добро пожаловать в виртуальную FS!"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "etc",
+      "type": "dir",
+      "children": [
+        {
+          "name": "config.json",
+          "type": "file",
+          "contentText": "{ \"version\": \"1.0\" }"
+        }
+      ]
+    },
+    {
+      "name": "docs",
+      "type": "dir",
+      "children": [
+        {
+          "name": "manual.txt",
+          "type": "file",
+          "contentText": "Это пример документации."
+        }
+      ]
+    }
+  ]
+}

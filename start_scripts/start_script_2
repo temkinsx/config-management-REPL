@@ -1,0 +1,15 @@
+# Загружаем другую файловую систему
+vfs-load /path/to/my_vfs.json
+
+# Проверяем содержимое корня
+ls
+
+# Переходим в /docs
+cd /docs
+ls
+
+# Сообщение
+echo Switched VFS successfully
+
+# Выход
+exit
