@@ -41,13 +41,14 @@ func (r *REPL) Run() {
 
 	var sc *bufio.Scanner
 	if *scriptPath != "" {
-		fmt.Printf("Starting with script: %s", *scriptPath)
 		f, err := os.Open(*scriptPath)
 		if err != nil {
 			fmt.Println("error: ", err)
 			return
 		}
 		defer f.Close()
+
+		fmt.Printf("Starting with script: %s", *scriptPath)
 
 		sc = bufio.NewScanner(f)
 		runScript(sc, p, env, cmds)
