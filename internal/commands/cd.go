@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"github.com/temkinsx/config-management-REPL/internal/commands/model"
 )
 
@@ -17,14 +16,10 @@ func (c *Cd) Run(args []string, env *model.Env) (string, error) {
 		return "", nil
 	}
 
-	targetDir, err := env.FS.ResolvePath(args[0])
+	err := env.FS.Cd(args[0])
 	if err != nil {
 		return "", err
 	}
-	if targetDir.Type != "dir" {
-		return "", fmt.Errorf("%s is not a directory")
-	}
 
-	env.FS.Cwd = targetDir
 	return "", err
 }

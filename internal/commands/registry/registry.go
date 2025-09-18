@@ -20,4 +20,10 @@ func (r *Registry) registerAll() {
 	r.Commands["echo"] = &commands.Echo{}
 	r.Commands["ls"] = &commands.Ls{}
 	r.Commands["cd"] = &commands.Cd{}
+	r.Commands["touch"] = &commands.Touch{}
+	r.Commands["clear"] = &commands.Clear{}
+	r.Commands["uname"] = &commands.Uname{}
+	r.Commands["uniq"] = &commands.Uniq{}
+	r.Commands["cat"] = &commands.Cat{}
+	r.Commands["vfs-save"] = &commands.VfsSave{}
 }

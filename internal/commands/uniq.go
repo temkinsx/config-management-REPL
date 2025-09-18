@@ -2,8 +2,9 @@ package commands
 
 import (
 	"fmt"
-	"github.com/temkinsx/config-management-REPL/internal/commands/model"
 	"strings"
+
+	"github.com/temkinsx/config-management-REPL/internal/commands/model"
 )
 
 type Uniq struct {

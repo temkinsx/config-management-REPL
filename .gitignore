@@ -1,0 +1,30 @@
+# бинарники
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# go build
+*.test
+*.out
+*.a
+
+# кэш go
+/go.sum
+/go.work.sum
+
+# каталоги
+bin/
+build/
+dist/
+snapshots/
+
+# IDE / редакторы
+.vscode/
+.idea/
+*.iml
+
+# OS мусор
+.DS_Store
+Thumbs.db

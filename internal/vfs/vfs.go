@@ -2,9 +2,26 @@ package vfs
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
+	"time"
+)
+
+const (
+	TypeFile = "file"
+	TypeDir  = "dir"
+)
+
+var (
+	ErrNotFound       = errors.New("no such file or directory")
+	ErrNotADir        = errors.New("is not a directory")
+	ErrFileNoChildren = errors.New("file can't have children")
+	ErrDuplicateName  = errors.New("duplicate child name in directory")
+	ErrInvalidType    = errors.New("invalid type")
+	ErrInvalidName    = errors.New("invalid name")
 )
 
 type VFS struct {
@@ -48,10 +65,10 @@ func LoadFS(path string) (*VFS, error) {
 		}
 		root = &tmp
 	} else {
-		fmt.Println("Path for JSON not set: using default vfs...")
+		fmt.Println("Path for JSON is not specified: using default vfs...")
 		root = &Node{
 			Name:     "/",
-			Type:     "dir",
+			Type:     TypeDir,
 			Children: []*Node{},
 		}
 	}
@@ -62,6 +79,36 @@ func LoadFS(path string) (*VFS, error) {
 	}, nil
 }
 
+func (v *VFS) Save(path string) error {
+	if path == "" {
+		fmt.Println("Path is not specified: snapshot will be stored at /snapshots directory")
+		path = snapshotFileName("./snapshots")
+	}
+
+	dir := filepath.Dir(path)
+
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	enc := json.NewEncoder(f)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(v.Root); err != nil {
+		return err
+	}
+
+	fmt.Printf("snapshot saved: %s\n", path)
+
+	return nil
+}
+
 func (v *VFS) ResolvePath(path string) (*Node, error) {
 	path = strings.TrimSpace(path)
 
@@ -70,7 +117,7 @@ func (v *VFS) ResolvePath(path string) (*Node, error) {
 	}
 
 	var start *Node
-	if strings.HasPrefix(path, "/") || strings.HasPrefix(path, "./") {
+	if strings.HasPrefix(path, "/") {
 		start = v.Root
 	} else {
 		start = v.Cwd
@@ -99,7 +146,7 @@ func (v *VFS) ResolvePath(path string) (*Node, error) {
 				}
 			}
 			if !found {
-				return nil, fmt.Errorf("no such file or directory: %s", part)
+				return nil, fmt.Errorf("%w: %s", ErrNotFound, part)
 			}
 		}
 	}
@@ -108,13 +155,17 @@ func (v *VFS) ResolvePath(path string) (*Node, error) {
 }
 
 func (v *VFS) Touch(path string, name string) error {
+	if name == "" || strings.Contains(name, "/") || name == "." || name == ".." {
+		return fmt.Errorf("%s: %w", name, ErrInvalidName)
+	}
+
 	targetDir, err := v.ResolvePath(path)
 	if err != nil {
 		return err
 	}
 
-	if targetDir.Type != "dir" {
-		return fmt.Errorf("%s is not a directory", targetDir.Name)
+	if targetDir.Type != TypeDir {
+		return fmt.Errorf("%s %w", targetDir.Name, ErrNotADir)
 	}
 
 	for _, ch := range targetDir.Children {
@@ -125,7 +176,7 @@ func (v *VFS) Touch(path string, name string) error {
 
 	file := &Node{
 		Name:   name,
-		Type:   "file",
+		Type:   TypeFile,
 		parent: targetDir,
 	}
 
@@ -139,8 +190,8 @@ func (v *VFS) Touch(path string, name string) error {
 }
 
 func (v *VFS) List() ([]*Node, error) {
-	if v.Cwd.Type != "dir" {
-		return []*Node{}, fmt.Errorf("%s is not a directory", v.Cwd.Name)
+	if v.Cwd.Type != TypeDir {
+		return nil, fmt.Errorf("%s: %w", v.Cwd.Name, ErrNotADir)
 	}
 	if v.Cwd.Children == nil {
 		return []*Node{}, nil
@@ -154,8 +205,8 @@ func (v *VFS) Cd(path string) error {
 		return err
 	}
 
-	if cur.Type != "dir" {
-		return fmt.Errorf("%s is not a directory")
+	if cur.Type != TypeDir {
+		return fmt.Errorf("%s: %w", cur.Name, ErrNotADir)
 	}
 
 	v.Cwd = cur
@@ -166,12 +217,12 @@ func setParents(n *Node, parent *Node) error {
 	n.parent = parent
 
 	switch n.Type {
-	case "file":
+	case TypeFile:
 		if len(n.Children) > 0 {
-			return fmt.Errorf("file %s can't have children", n.Name)
+			return fmt.Errorf("%s: %w", n.Name, ErrFileNoChildren)
 		}
-	case "dir":
-		if len(n.Children) == 0 {
+	case TypeDir:
+		if n.Children == nil {
 			n.Children = []*Node{}
 		}
 
@@ -180,12 +231,12 @@ func setParents(n *Node, parent *Node) error {
 		//проверка на уникальность имен содержимого
 		for _, ch := range n.Children {
 			if _, ok := seen[ch.Name]; ok {
-				return fmt.Errorf("duplicate child name %q in directory %q", ch.Name, n.Name)
+				return fmt.Errorf("%s: %w (in dir %s)", ch.Name, ErrDuplicateName, n.Name)
 			}
 			seen[ch.Name] = struct{}{}
 		}
 	default:
-		return fmt.Errorf("invalid type: %s", n.Type)
+		return fmt.Errorf("%w: %s", ErrInvalidType, n.Type)
 	}
 
 	for _, ch := range n.Children {
@@ -226,4 +277,12 @@ func PrintVFS(n *Node, indent string) {
 	for _, child := range n.Children {
 		PrintVFS(child, indent+"  ")
 	}
+}
+
+func snapshotFileName(dir string) string {
+	now := time.Now()
+
+	timestamp := now.Format("2006-01-02_15-04-05")
+
+	return filepath.Join(dir, "snapshot_"+timestamp+".json")
 }

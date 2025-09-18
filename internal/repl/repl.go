@@ -2,20 +2,26 @@ package repl
 
 import (
 	"bufio"
+	"errors"
 	"flag"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/temkinsx/config-management-REPL/internal/commands/model"
 	"github.com/temkinsx/config-management-REPL/internal/commands/registry"
 	"github.com/temkinsx/config-management-REPL/internal/parser"
 	"github.com/temkinsx/config-management-REPL/internal/prompt"
 	"github.com/temkinsx/config-management-REPL/internal/vfs"
-	"os"
-	"strings"
 )
 
 var (
-	vfsPath    = flag.String("vfs", "", "path to Virtual File System JSON\nIf empty - starting with default VFS (internal/vfs/vfs_default.json)")
+	vfsPath    = flag.String("vfs", "internal/vfs/vfs_default.json", "path to Virtual File System JSON\nIf empty - starting with default VFS (internal/vfs/vfs_default.json)")
 	scriptPath = flag.String("script", "", "path to start script")
+)
+
+var (
+	ErrCommandNotFound = errors.New("command not found")
 )
 
 type REPL struct{}
@@ -35,9 +41,10 @@ func (r *REPL) Run() {
 
 	var sc *bufio.Scanner
 	if *scriptPath != "" {
+		fmt.Printf("Starting with script: %s", *scriptPath)
 		f, err := os.Open(*scriptPath)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("error: ", err)
 			return
 		}
 		defer f.Close()
@@ -62,19 +69,19 @@ func (r *REPL) Run() {
 
 		cmdName, args, err := parser.ParseLine(line)
 		if err != nil {
-			fmt.Println("error:", err)
+			fmt.Println("error: ", err)
 			continue
 		}
 
 		cmd, ok := cmds.Commands[cmdName]
 		if !ok {
-			fmt.Printf("command not found: %s\n", cmdName)
+			fmt.Printf("%s: %s\n", ErrCommandNotFound, cmdName)
 			continue
 		}
 
 		out, err := cmd.Run(args, env)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("error: ", err)
 			continue
 		}
 
