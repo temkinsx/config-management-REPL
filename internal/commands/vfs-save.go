@@ -6,13 +6,13 @@ import (
 	"github.com/temkinsx/config-management-REPL/internal/commands/model"
 )
 
-type VfsSave struct{}
+type VFSSave struct{}
 
-func (v *VfsSave) Name() string {
+func (v *VFSSave) Name() string {
 	return "vfs-save"
 }
 
-func (v *VfsSave) Run(args []string, env *model.Env) (string, error) {
+func (v *VFSSave) Run(args []string, env *model.Env) (string, error) {
 	var path string
 	switch len(args) {
 	case 0:

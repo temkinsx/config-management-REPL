@@ -25,5 +25,7 @@ func (r *Registry) registerAll() {
 	r.Commands["uname"] = &commands.Uname{}
 	r.Commands["uniq"] = &commands.Uniq{}
 	r.Commands["cat"] = &commands.Cat{}
-	r.Commands["vfs-save"] = &commands.VfsSave{}
+	r.Commands["vfs-save"] = &commands.VFSSave{}
+	r.Commands["vfs-load"] = &commands.VFSLoad{}
+
 }
