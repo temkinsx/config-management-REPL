@@ -37,7 +37,7 @@ func (u Uniq) Run(args []string, env *model.Env) (string, error) {
 	var result []string
 	var prev string
 	for i, s := range lines {
-		if i == 0 || s == prev {
+		if i == 0 || s != prev {
 			result = append(result, s)
 		}
 		prev = s
@@ -45,8 +45,4 @@ func (u Uniq) Run(args []string, env *model.Env) (string, error) {
 
 	targetFile.ContentText = strings.Join(result, "\n")
 	return targetFile.ContentText, nil
-}
-
-func removeAt(s []string, i int) []string {
-	return append(s[:i], s[i+1:]...)
 }
