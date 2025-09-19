@@ -32,7 +32,7 @@ func (r *REPL) Run() {
 
 	fs, err := vfs.LoadFS(*vfsPath)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("error: ", err)
 		os.Exit(1)
 	}
 
@@ -113,7 +113,7 @@ func runScript(sc *bufio.Scanner, p *prompt.Prompt, env *model.Env, cmds *regist
 
 		cmd, ok := cmds.Commands[cmdName]
 		if !ok {
-			fmt.Printf("# skipped: command not found: %s\n", cmdName)
+			fmt.Printf("# skipped: %s: %s\n", ErrCommandNotFound, cmdName)
 			continue
 		}
 
