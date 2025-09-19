@@ -44,7 +44,7 @@ func LoadFS(path string) (*VFS, error) {
 	if path != "" {
 		f, err := os.Open(path)
 		if err != nil {
-			return &VFS{}, err
+			return nil, err
 		}
 		defer f.Close()
 
@@ -52,7 +52,7 @@ func LoadFS(path string) (*VFS, error) {
 		var tmp Node
 		err = dec.Decode(&tmp)
 		if err != nil {
-			return &VFS{}, err
+			return nil, err
 		}
 
 		if tmp.Name == "" {
@@ -61,7 +61,7 @@ func LoadFS(path string) (*VFS, error) {
 
 		err = setParents(&tmp, nil)
 		if err != nil {
-			return &VFS{}, err
+			return nil, err
 		}
 		root = &tmp
 	} else {

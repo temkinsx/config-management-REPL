@@ -1,0 +1,44 @@
+{
+  "name": "/",
+  "type": "dir",
+  "children": [
+    {
+      "name": "home",
+      "type": "dir",
+      "children": [
+        {
+          "name": "user",
+          "type": "dir",
+          "children": [
+            { "name": "docs", "type": "dir",
+              "children": [
+                { "name": "notes.txt", "type": "file", "contentText": "line1\nline1\nline2" },
+                { "name": "guide.md",  "type": "file", "contentText": "# Guide\nUse VFS" }
+              ]
+            },
+            { "name": "projects", "type": "dir",
+              "children": [
+                { "name": "demo", "type": "dir",
+                  "children": [
+                    { "name": "main.go", "type": "file", "contentText": "package main\nfunc main(){}" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "var",
+      "type": "dir",
+      "children": [
+        { "name": "data", "type": "dir",
+          "children": [
+            { "name": "cache.db", "type": "file", "contentBase64": "AAEC" }
+          ]
+        }
+      ]
+    }
+  ]
+}

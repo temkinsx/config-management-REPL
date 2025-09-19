@@ -48,7 +48,7 @@ func (r *REPL) Run() {
 		}
 		defer f.Close()
 
-		fmt.Printf("Starting with script: %s", *scriptPath)
+		fmt.Println("Starting with script: ", *scriptPath)
 
 		sc = bufio.NewScanner(f)
 		runScript(sc, p, env, cmds)

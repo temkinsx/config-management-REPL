@@ -25,7 +25,7 @@ func (u Uniq) Run(args []string, env *model.Env) (string, error) {
 	}
 
 	if targetFile.Type != "file" {
-		return "", fmt.Errorf("error: %s is not a file", targetFile)
+		return "", fmt.Errorf("error: %s is not a file", targetFile.Name)
 	}
 
 	lines := strings.Split(targetFile.ContentText, "\n")

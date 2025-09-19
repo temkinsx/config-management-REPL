@@ -19,6 +19,8 @@ bin/
 build/
 dist/
 snapshots/
+tmp/
+vfs-variants/
 
 # IDE / редакторы
 .vscode/

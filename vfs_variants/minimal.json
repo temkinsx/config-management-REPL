@@ -1,0 +1,17 @@
+{
+  "name": "/",
+  "type": "dir",
+  "children": [
+    {
+      "name": "home",
+      "type": "dir",
+      "children": [
+        {
+          "name": "readme.txt",
+          "type": "file",
+          "contentText": "Hello from minimal VFS!"
+        }
+      ]
+    }
+  ]
+}
