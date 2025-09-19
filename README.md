@@ -55,7 +55,7 @@
    
    Например, чтобы загрузить дефолтное состояние VFS:
    ```
-   ./cmrepl -vfs internal/vfs/vfs_default.json
+   ./cmrepl
    ```
 
 ## Флаги запуска
