@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+
 	"github.com/temkinsx/config-management-REPL/internal/commands/model"
 	"github.com/temkinsx/config-management-REPL/internal/vfs"
 )
@@ -13,7 +14,7 @@ func (V *VFSLoad) Name() string {
 }
 
 func (V *VFSLoad) Run(args []string, env *model.Env) (string, error) {
-	if len(args) != 0 {
+	if len(args) == 0 {
 		return "", fmt.Errorf("vfs-load: invalid arguments (vfs-load [path])")
 	}
 

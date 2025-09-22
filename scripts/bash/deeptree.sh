@@ -9,7 +9,6 @@ SCRIPT="$ROOT_DIR/tmp/_tmp_deeptree.script"
 
 mkdir -p "$(dirname "$VFS")" "$(dirname "$SCRIPT")" "$ROOT_DIR/bin"
 
-# Собрать бинарь, если нет
 if [[ ! -x "$BIN" ]]; then
   echo "Building binary at: $BIN"
   go build -buildvcs=false -o "$BIN" "$ROOT_DIR/cmd/shell"
